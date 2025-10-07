@@ -183,7 +183,7 @@ import React, { useState } from 'react'
           const newRows: ReceptionExcelRow[] = template.reception_template_items.map(item => ({
             receptionId: crypto.randomUUID(),
             receptionDate: firstCurrentRow?.receptionDate || template.reception_date,
-            receptionNumber: firstCurrentRow?.receptionNumber || 'Новый',
+            receptionNumber: firstCurrentRow?.receptionNumber || 'Необходимо заполнить значение',
             counterpartyName: firstCurrentRow?.counterpartyName || template.counterparty_name,
             subdivisionName: item.subdivision_name,
             positionNumber: newPositionNumber,
