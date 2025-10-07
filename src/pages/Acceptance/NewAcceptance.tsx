@@ -153,6 +153,15 @@ import React, { useState } from 'react'
         setSuccessMessage(`Позиция ${positionNumber} успешно удалена`)
       }
 
+      const handleReceptionNumberUpdate = (newReceptionNumber: string) => {
+        const newData = receptionData.map(item => ({
+          ...item,
+          receptionNumber: newReceptionNumber
+        }))
+        setReceptionData(newData)
+        setSuccessMessage(`Номер приемки изменен на "${newReceptionNumber}"`)
+      }
+
       // --- Template Handlers ---
 
       const handleOpenSaveTemplateModal = (positionNumber: number) => {
@@ -255,6 +264,7 @@ import React, { useState } from 'react'
                   onDeletePosition={receptionData.length > 0 ? handleDeletePosition : undefined}
                   onAddItemToGroup={receptionData.length > 0 ? handleAddItemToGroup : undefined}
                   onSaveAsTemplate={receptionData.length > 0 ? handleOpenSaveTemplateModal : undefined}
+                  onReceptionNumberUpdate={receptionData.length > 0 ? handleReceptionNumberUpdate : undefined}
                 />
               )}
             </div>

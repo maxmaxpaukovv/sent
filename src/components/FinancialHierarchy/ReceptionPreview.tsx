@@ -10,6 +10,7 @@ import React, { useState } from 'react'
       onDeletePosition?: (positionNumber: number) => void
       onAddItemToGroup?: (positionNumber: number, workGroup: string) => void
       onSaveAsTemplate?: (positionNumber: number) => void
+      onReceptionNumberUpdate?: (newReceptionNumber: string) => void
     }
 
     interface PositionItemProps {
@@ -663,7 +664,9 @@ import React, { useState } from 'react'
       )
     }
 
-    export const ReceptionPreview: React.FC<ReceptionPreviewProps> = ({ data, onDataChange, onAddGroupClick, onDuplicatePosition, onDeletePosition, onAddItemToGroup, onSaveAsTemplate }) => {
+    export const ReceptionPreview: React.FC<ReceptionPreviewProps> = ({ data, onDataChange, onAddGroupClick, onDuplicatePosition, onDeletePosition, onAddItemToGroup, onSaveAsTemplate, onReceptionNumberUpdate }) => {
+      const [isEditingReceptionNumber, setIsEditingReceptionNumber] = useState(false)
+      const [editReceptionNumber, setEditReceptionNumber] = useState('')
       if (data.length === 0) {
         return (
           <div className="text-center py-12 text-gray-500">
@@ -755,6 +758,22 @@ import React, { useState } from 'react'
         onDataChange(newData)
       }
 
+      const handleReceptionNumberSave = () => {
+        if (onReceptionNumberUpdate && editReceptionNumber.trim() && editReceptionNumber !== firstRow.receptionNumber) {
+          onReceptionNumberUpdate(editReceptionNumber.trim())
+        }
+        setIsEditingReceptionNumber(false)
+      }
+
+      const handleReceptionNumberKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          handleReceptionNumberSave()
+        } else if (e.key === 'Escape') {
+          setEditReceptionNumber(firstRow.receptionNumber)
+          setIsEditingReceptionNumber(false)
+        }
+      }
+
       return (
         <div className="space-y-6">
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -762,7 +781,33 @@ import React, { useState } from 'react'
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Номер приемки:</span>
-                <p className="font-medium">{firstRow.receptionNumber}</p>
+                {isEditingReceptionNumber && onReceptionNumberUpdate ? (
+                  <input
+                    type="text"
+                    value={editReceptionNumber}
+                    onChange={(e) => setEditReceptionNumber(e.target.value)}
+                    onBlur={handleReceptionNumberSave}
+                    onKeyDown={handleReceptionNumberKeyDown}
+                    autoFocus
+                    className="w-full px-2 py-1 text-sm font-medium border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mt-1"
+                  />
+                ) : (
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="font-medium">{firstRow.receptionNumber}</p>
+                    {onReceptionNumberUpdate && (
+                      <button
+                        onClick={() => {
+                          setEditReceptionNumber(firstRow.receptionNumber)
+                          setIsEditingReceptionNumber(true)
+                        }}
+                        className="text-gray-400 hover:text-blue-600 transition"
+                        title="Редактировать номер приемки"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <span className="text-gray-500">Дата приемки:</span>
